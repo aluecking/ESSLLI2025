@@ -1,0 +1,7 @@
+numpy==1.26.4
+jupyterlab
+ipywidgets
+mediapipe
+tqdm
+
+>pip install "jupyterlab<4.0" "jupyter-server<2.0" "pywinpty<2.0"
