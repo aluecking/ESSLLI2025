@@ -36,8 +36,6 @@ class HandPoseFeatureGenerator:
             Dictionary of extracted finger features
         """
         features = {}
-        print(frame_data)
-        print("=====================")
         if not frame_data.get('instances'):
             return self._get_empty_features()
 
@@ -162,7 +160,6 @@ class HandPoseFeatureGenerator:
             features_list.append(features)
 
         return features_list
-
 
     def create_feature_dataframe(self, video_paths: List[str], labels: List[str] = None) -> 'pd.DataFrame':
         """
