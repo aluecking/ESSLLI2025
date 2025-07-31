@@ -64,6 +64,42 @@ class HandPoseFeatureGenerator:
 
         return features
 
+    def extract_features_with_defaults(self, frame_data: Dict) -> Dict[str, float]:
+        """
+        Modified extract_features that always returns complete feature set with defaults.
+        """
+        # Get the default/empty features first
+        features = self._get_empty_features()
+
+        if not frame_data.get('instances'):
+            return features
+
+        # Filter out instances where bbox_score == 1
+        valid_instances = [inst for inst in frame_data['instances']
+                           if inst.get('bbox_score', 0) != 1.0]
+
+        if not valid_instances:
+            return features
+
+        # Process the most confident valid instance
+        best_instance = self._get_best_instance(valid_instances)
+        if not best_instance:
+            return features
+
+        keypoints = np.array(best_instance['keypoints'])
+        scores = np.array(best_instance['keypoint_scores'])
+
+        # Filter out low-confidence keypoints
+        valid_mask = scores > 0.2
+        if np.sum(valid_mask) < 10:  # Need at least 10 valid keypoints
+            return features
+
+        # Extract finger-specific features and UPDATE the defaults
+        finger_features = self._extract_finger_features(keypoints, valid_mask)
+        features.update(finger_features)  # This will overwrite defaults with actual values
+
+        return features
+
     def _get_best_instance(self, instances: List[Dict]) -> Optional[Dict]:
         """Select the instance with highest bbox confidence."""
         if not instances:

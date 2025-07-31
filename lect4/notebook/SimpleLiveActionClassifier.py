@@ -51,7 +51,7 @@ class SimpleLiveActionClassifier:
         pose_data['frame_id'] = 0
 
         # Extract features
-        features = self.feature_extractor.extract_features(pose_data)
+        features = self.feature_extractor.extract_features_with_defaults(pose_data)
         return features
 
     def classify_features(self, features):
